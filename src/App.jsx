@@ -1,42 +1,65 @@
 import React from 'react';
 import { useState } from 'react';
 import Board from './components/Board';
+import History from './components/History';
+import StatusMessage from './components/StatusMessage';
 import './styles/root.scss';
 import { calcWinner } from './helper';
+
+const NEW_GAME = [{ board: Array(9).fill(null), isXNext: false }];
+
 const App = () => {
-  const [board, updateBoardState] = useState(Array(9).fill(null));
-  const [isXNext, setIsXNext] = useState(false);
+  const [history, setHistory] = useState(NEW_GAME);
 
-  const winner = calcWinner(board);
+  const [currentMove, setCurrentMove] = useState(0);
 
-  const message = winner
-    ? `Winner is ${winner}`
-    : `Next player : ${isXNext ? 'X' : 'O'}`;
+  const current = history[currentMove];
+
+  const { winner, winningSquares } = calcWinner(current.board);
 
   const handleSquareClick = position => {
-    if (board[position] != null || winner) {
+    if (current.board[position] != null || winner) {
       return;
     }
 
-    updateBoardState(prevBoardState => {
-      //console.log(prevBoardState);
-      return prevBoardState.map((square_val, pos) => {
-        //console.log(square_val);
+    setHistory(prev => {
+      const last = prev[prev.length - 1];
+      const newBoard = last.board.map((square_val, pos) => {
         if (pos == position) {
-          return isXNext ? 'X' : 'O';
+          return last.isXNext ? 'X' : 'O';
         }
         return square_val;
       });
+
+      return prev.concat({ board: newBoard, isXNext: !last.isXNext });
     });
-    setIsXNext(prevBoardState => !prevBoardState);
+    setCurrentMove(prev => prev + 1);
+  };
+
+  const moveTo = move => {
+    setCurrentMove(move);
+  };
+
+  const onNewGame = () => {
+    setHistory(NEW_GAME);
+    setCurrentMove(0);
   };
 
   return (
     <body>
       <div className="app">
         <h1>Tic-Tac-Toe</h1>
-        <h3>{message}</h3>
-        <Board board={board} handleSquareClick={handleSquareClick} />
+        <StatusMessage winner={winner} current={current} />
+        <Board
+          board={current.board}
+          handleSquareClick={handleSquareClick}
+          winningSquares={winningSquares}
+        />
+
+        <button type="button" onClick={onNewGame}>
+          Start New Game
+        </button>
+        <History history={history} moveTo={moveTo} currentMove={currentMove} />
       </div>
     </body>
   );
