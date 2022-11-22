@@ -5,6 +5,7 @@ import History from './components/History';
 import StatusMessage from './components/StatusMessage';
 import './styles/root.scss';
 import { calcWinner } from './helper';
+//import { noMovesLeft } from './components/StatusMessage';
 
 const NEW_GAME = [{ board: Array(9).fill(null), isXNext: false }];
 
@@ -46,22 +47,28 @@ const App = () => {
   };
 
   return (
-    <body>
-      <div className="app">
-        <h1>Tic-Tac-Toe</h1>
-        <StatusMessage winner={winner} current={current} />
-        <Board
-          board={current.board}
-          handleSquareClick={handleSquareClick}
-          winningSquares={winningSquares}
-        />
+    <div className="app">
+      <h1>
+        Tic-<span className="text-white">Tac</span>-Toe
+      </h1>
+      <StatusMessage winner={winner} current={current} />
+      <Board
+        board={current.board}
+        handleSquareClick={handleSquareClick}
+        winningSquares={winningSquares}
+      />
 
-        <button type="button" onClick={onNewGame}>
-          Start New Game
-        </button>
-        <History history={history} moveTo={moveTo} currentMove={currentMove} />
-      </div>
-    </body>
+      <button
+        type="button"
+        onClick={onNewGame}
+        className={`btn-reset ${winner ? 'active' : ''}`}
+      >
+        Start New Game
+      </button>
+      <h2 style={{ forntWeight: 'normal' }}>Current Game History</h2>
+      <History history={history} moveTo={moveTo} currentMove={currentMove} />
+      <div className="bg-balls" />
+    </div>
   );
 };
 
