@@ -67,6 +67,9 @@ const App = () => {
       </button>
       <h2 style={{ forntWeight: 'normal' }}>Current Game History</h2>
       <History history={history} moveTo={moveTo} currentMove={currentMove} />
+      <a href="https://github.com/Tavashi-Kumar/tictactoe.git" className="link">
+        <i>GitHub Repository</i>
+      </a>
       <div className="bg-balls" />
     </div>
   );
